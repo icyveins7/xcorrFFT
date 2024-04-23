@@ -33,3 +33,4 @@
 
 # Extras
 build/
+.cache/

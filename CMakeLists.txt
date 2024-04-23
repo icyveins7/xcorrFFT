@@ -19,8 +19,13 @@ endif()
 
 # If IPP selected, add the ipp_ext submodule
 if (${IMPL} STREQUAL IPP)
+    message("Adding IPP includes at " $ENV{IPPROOT}/include)
     message("Adding ipp_ext submodule")
-    include_directories(ipp_ext/include)
+    include_directories(
+        $ENV{IPPROOT}/include
+        ipp_ext/include
+    )
+    add_compile_definitions(IPP_IMPL)
 else()
     message(FATAL_ERROR "Other implementations not yet supported.")
 endif()

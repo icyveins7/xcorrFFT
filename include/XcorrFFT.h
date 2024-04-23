@@ -1,9 +1,22 @@
 #pragma once
 
-#include "ipp.h"
-#include "ipp_ext.h"
 #include <vector>
 #include <thread>
+
+#ifdef IPP_IMPL
+
+#include "ipp.h"
+#include "ipp_ext.h"
+
+template <typename T>
+using Vector = ippe::vector<T>;
+
+#else
+
+template <typename T>
+using Vector = std::vector<T>;
+
+#endif
 
 // T: complex type, U: real type
 // This is so it's more generic and can be used with
@@ -37,14 +50,14 @@ public:
     );
 
     // output vectors
-    std::vector<U> m_productpeaks;
+    Vector<U> m_productpeaks;
     std::vector<int> m_freqlistinds;
 
 private:
     int m_cutoutlen;
     int m_num_threads = 1;
 
-    ippe::vector<T> m_cutout;
+    Vector<T> m_cutout;
     U m_cutoutNormSq;
 
     // threads
@@ -66,3 +79,4 @@ private:
 
 
 };
+
