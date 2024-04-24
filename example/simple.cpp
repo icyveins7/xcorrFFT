@@ -1,8 +1,5 @@
-/*
-cl /EHsc /O2 test_IppXcorrFFT.cpp IppXcorrFFT.cpp ippcore.lib ipps.lib -I"..\..\ipp_ext\include"
-*/
-
-#include "IppXcorrFFT.h"
+#include "XcorrFFT.h"
+#include <iostream>
 
 int main()
 {
@@ -23,18 +20,37 @@ int main()
 
 
     // create xcorr object
-    IppXcorrFFT_32fc xcfft(cutout.data(), cutout.size(), 1, true);
-    
+    XcorrFFT<Ipp32fc, Ipp32f> xcfft(cutout.data(), cutout.size(), 1, true);
+
+    // define xcorr limits
+    int startIdx = 0;
+    int endIdx = data.size();
+    int idxStep = 3;
+    ippe::vector<Ipp32f> productpeaks(xcfft.getOutputLength(startIdx, endIdx, idxStep));
+    ippe::vector<Ipp32s> freqlistinds(productpeaks.size());
+
     // loop arbitrarily many times to see the error
     for (int i = 0; i < 2; i++)
     {
         printf("Performing xcorr...\n");
-        xcfft.xcorr(data.data(), data.size(), 0, data.size(), 3); // overshoot, but it should write 0s
+        try{
+            xcfft.xcorr_array(
+                data.data(), data.size(), 
+                startIdx, endIdx, idxStep,
+                productpeaks.data(),
+                reinterpret_cast<int*>(freqlistinds.data()),
+                static_cast<int>(productpeaks.size())
+            ); // overshoot, but it should write 0s
+        }
+        catch(std::exception &e)
+        {
+            std::cout << e.what() << std::endl;
+        }
     }
-        
+    printf("Xcorr complete\n");
 
-    for (int i = 0; i < xcfft.m_productpeaks.size(); i++){
-        printf("Peak %d: %f, fidx %d \n", i, xcfft.m_productpeaks[i], xcfft.m_freqlistinds[i]);
+    for (int i = 0; i < productpeaks.size(); i++){
+        printf("Peak %d: %f, fidx %d \n", i, productpeaks.at(i), freqlistinds.at(i));
     }
 
     printf("Complete\n");
