@@ -138,7 +138,7 @@ inline void XcorrFFT<T, U>::xcorr_thread(
         // Define the accessor index for the src
         i = startIdx + t * idxStep; 
 
-        printf("In thread %d, startIdx %d, on output %d/%d\n", tIdx, i, t, outputlen);
+        // printf("In thread %d, startIdx %d, on output %d/%d\n", tIdx, i, t, outputlen);
 
         // Don't compute if we're out of range
         if (i < 0 || i + m_cutoutlen > srclen)
@@ -149,7 +149,7 @@ inline void XcorrFFT<T, U>::xcorr_thread(
         }
 
         // First we multiply, use the first workspace
-        printf("Attempting Mul\n");
+        // printf("Attempting Mul\n");
         try{
             ippe::math::Mul(
                 m_cutout.data(),
@@ -162,7 +162,7 @@ inline void XcorrFFT<T, U>::xcorr_thread(
         {
             printf("Mul failed %s\n", e.what());
         }
-        printf("Completed Mul\n");
+        // printf("Completed Mul\n");
 
         // Then we fft the output, use the second workspace
         try{
@@ -177,7 +177,7 @@ inline void XcorrFFT<T, U>::xcorr_thread(
             // printf("workspace size: %zd\n", m_work_fc_1[tIdx].size());
             // printf("workspace size: %zd\n", m_work_fc_2[tIdx].size());
         }
-        printf("Completed FFT\n");
+        // printf("Completed FFT\n");
 
         // Get abs squared, reuse first workspace
         ippe::convert::PowerSpectr(

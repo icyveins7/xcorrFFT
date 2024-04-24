@@ -23,11 +23,12 @@ int main()
     XcorrFFT<Ipp32fc, Ipp32f> xcfft(cutout.data(), cutout.size(), 1, true);
 
     // define xcorr limits
-    int startIdx = 0;
+    int startIdx = 2;
     int endIdx = data.size();
     int idxStep = 3;
     ippe::vector<Ipp32f> productpeaks(xcfft.getOutputLength(startIdx, endIdx, idxStep));
     ippe::vector<Ipp32s> freqlistinds(productpeaks.size());
+    printf("Output size = %zd\n", productpeaks.size());
 
     // loop arbitrarily many times to see the error
     for (int i = 0; i < 2; i++)
@@ -50,7 +51,7 @@ int main()
     printf("Xcorr complete\n");
 
     for (int i = 0; i < productpeaks.size(); i++){
-        printf("Peak %d: %f, fidx %d \n", i, productpeaks.at(i), freqlistinds.at(i));
+        printf("Peak [%d]: %f, fidx %d \n", startIdx + idxStep * i, productpeaks.at(i), freqlistinds.at(i));
     }
 
     printf("Complete\n");
